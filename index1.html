@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio Digital | Integración de Contenidos Digitales</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --pastel-bg: #FAF6F0;           /* Crema pastel */
+            --pastel-card: #FFFFFF;         /* Blanco puro para tarjetas */
+            --pastel-sage: #D8E2DC;         /* Verde menta suave */
+            --pastel-pink: #FFE5EC;         /* Rosa pastel suave */
+            --pastel-peach: #FCD5CE;        /* Durazno/Terracota suave */
+            --text-main: #3D3A45;           /* Gris oscuro suave para texto */
+            --border-soft: rgba(61, 58, 69, 0.12);
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            color: var(--text-main);
+            background-color: var(--pastel-bg);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        body.scroll-locked {
+            overflow: hidden !important;
+        }
+
+        h1, h2, h3, h4, .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* BARRA SUPERIOR */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(250, 246, 240, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        .hamburger-btn:hover {
+            background-color: var(--pastel-sage);
+        }
+        .hamburger-btn span {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-main);
+            border-radius: 2px;
+        }
+
+        /* MENÚ LATERAL Y SCRIM */
+        .scrim {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .scrim.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            max-width: 80vw;
+            height: 100vh;
+            background-color: var(--pastel-bg);
+            border-right: 1px solid var(--border-soft);
+            z-index: 1050;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 24px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+        }
+        .nav-drawer.is-open {
+            transform: translateX(0);
+        }
+        .drawer-nav-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 1.15rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+        .drawer-nav-link:hover {
+            background-color: var(--pastel-sage);
+        }
+
+        /* SECCIONES Y TARJETAS */
+        .hero-section {
+            background: linear-gradient(135deg, #FAF6F0 0%, #F4ECE1 100%);
+            padding: 80px 0 60px 0;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .welcome-card {
+            background-color: var(--pastel-card);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .badge-pastel {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            background-color: var(--pastel-peach);
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.88rem;
+            display: inline-block;
+        }
+
+        .control-panel {
+            background-color: var(--pastel-card);
+            border: 2px dashed var(--border-soft);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--pastel-card);
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .img-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            background-color: #F8F9FA;
+            border-bottom: 1px solid var(--border-soft);
+        }
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .project-card:hover .img-container img {
+            transform: scale(1.04);
+        }
+
+        .btn-pastel {
+            background-color: var(--pastel-peach);
+            color: var(--text-main);
+            border: none;
+            padding: 10px 22px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-pastel:hover {
+            background-color: #f7c3b8;
+            color: var(--text-main);
+        }
+
+        /* MODAL */
+        .project-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+        }
+        .project-modal.is-active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content-box {
+            background-color: var(--pastel-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            max-width: 850px;
+            width: 100%;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .modal-img {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid var(--border-soft);
+            background-color: #FFF;
+        }
+
+        footer {
+            background-color: var(--pastel-card);
+            border-top: 1px solid var(--border-soft);
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR DE NAVEGACIÓN -->
+    <header class="top-bar">
+        <button id="hamburgerBtn" class="hamburger-btn" aria-expanded="false" aria-controls="navDrawer" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="navbar-brand m-0 fs-5">
+            <i class="bi bi-journal-bookmark me-2"></i>Portafolio Digital
+        </div>
+        <div style="width: 38px;"></div>
+    </header>
+
+    <!-- MENÚ LATERAL Y CAPA OSCURA -->
+    <div id="scrim" class="scrim"></div>
+
+    <nav id="navDrawer" class="nav-drawer" aria-label="Menú principal">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <span class="fs-5 fw-bold" style="font-family: 'Playfair Display', serif;">Menú</span>
+            <button id="closeDrawerBtn" class="btn-close" aria-label="Cerrar menú"></button>
+        </div>
+        <a class="drawer-nav-link" href="#inicio">Bienvenida</a>
+        <a class="drawer-nav-link" href="#gestion-imagenes">Gestión de Galería</a>
+        <a class="drawer-nav-link" href="#galeria">Proyectos</a>
+        <a class="drawer-nav-link" href="#contacto">Contacto</a>
+    </nav>
+
+    <!-- SECCIÓN DE BIENVENIDA -->
+    <section id="inicio" class="hero-section text-center">
+        <div class="container">
+            <div class="welcome-card mx-auto" style="max-width: 850px;">
+                <span class="badge-pastel mb-3">Grado Décimo &bull; Integración en Contenidos Digitales</span>
+                <h1 class="display-5 mb-3" style="font-style: italic;">¡Bienvenidos a Nuestro Portafolio!</h1>
+                <p class="fs-5 mb-4 text-muted">
+                    I.E. Aureliano Flórez Cardona &mdash; Anserma, Caldas
+                </p>
+                <hr class="my-4" style="border-color: var(--border-soft);">
+                <div class="row text-start g-3 align-items-center">
+                    <div class="col-md-6 border-end">
+                        <h3 class="h5 mb-2"><i class="bi bi-people-fill me-2" style="color: #9C88FF;"></i>Integrantes:</h3>
+                        <ul class="list-unstyled mb-0">
+                            <li class="fw-semibold">&bull; María Alejandra Restrepo Moncada</li>
+                            <li class="fw-semibold">&bull; Elisabet Carvajal Tamayo</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 ps-md-4">
+                        <h3 class="h5 mb-2"><i class="bi bi-palette-fill me-2" style="color: #FFB5A7;"></i>Especialidad:</h3>
+                        <p class="small mb-0 text-muted">
+                            <strong>Integración de Contenidos Digitales</strong>. Esta página fue creada con el propósito de recopilar, organizar y presentar todos los trabajos y proyectos que realizamos en equipo a lo largo del año académico.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="#galeria" class="btn-pastel">Ver Nuestros Trabajos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE GESTIÓN Y GALERÍA -->
+    <section id="galeria" class="py-5">
+        <div class="container py-3">
+            
+            <!-- PANEL DE CONTROL DE CÁRGA / ACTUALIZACIÓN DE IMÁGENES -->
+            <div id="gestion-imagenes" class="control-panel shadow-sm">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-cloud-upload fs-3 me-3" style="color: #9C88FF;"></i>
+                    <div>
+                        <h3 class="h5 mb-0">Control para Añadir / Cambiar Trabajos</h3>
+                        <small class="text-muted">Ruta de carpeta: <code>portafolio/imagenes/</code></small>
+                    </div>
+                </div>
+                
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label for="localFileInput" class="form-label small fw-bold text-uppercase">1. Seleccionar imágenes de tu PC</label>
+                        <input class="form-control form-control-sm" type="file" id="localFileInput" accept="image/*" multiple>
+                    </div>
+                    
+                    <div class="col-md-7">
+                        <label for="customFileName" class="form-label small fw-bold text-uppercase">2. Asignar ruta manual a una tarjeta</label>
+                        <div class="input-group input-group-sm">
+                            <select id="targetCardSelect" class="form-select" style="max-width: 170px;">
+                                <option value="new">Añadir nueva</option>
+                                <option value="1">Reemplazar Tarjeta 1</option>
+                                <option value="2">Reemplazar Tarjeta 2</option>
+                                <option value="3">Reemplazar Tarjeta 3</option>
+                                <option value="4">Reemplazar Tarjeta 4</option>
+                                <option value="5">Reemplazar Tarjeta 5</option>
+                                <option value="6">Reemplazar Tarjeta 6</option>
+                            </select>
+                            <span class="input-group-text bg-light text-muted">portafolio/imagenes/</span>
+                            <input type="text" id="customFileName" class="form-control" placeholder="ej: 7.jpg o mi_trabajo.jpg">
+                            <button id="addByPathBtn" class="btn btn-pastel rounded-end" type="button">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mb-5">
+                <h2 class="display-5">Galería de Proyectos</h2>
+                <p class="fs-5" style="font-style: italic; color: #828282;">Haz clic sobre cualquiera de los trabajos para abrir la vista ampliada</p>
+            </div>
+
+            <!-- GALERÍA DINÁMICA DE TARJETAS (6 PROYECTOS INICIALES) -->
+            <div id="galleryContainer" class="row g-4 justify-content-center">
+                
+                <!-- PROYECTO 1 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-1">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-1').src, 'Proyecto 1')">
+                        <div class="img-container">
+                            <img id="img-1" src="portafolio/imagenes/01.jpg" alt="Proyecto 1" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FFE5EC/3D3A45?text=Cargar+1.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 1</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 1</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-1">portafolio/imagenes/1.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTO 2 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-2">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-2').src, 'Proyecto 2')">
+                        <div class="img-container">
+                            <img id="img-2" src="portafolio/imagenes/2.jpg" alt="Proyecto 2" onerror="this.onerror=null; this.src='https://placehold.co/600x400/D8E2DC/3D3A45?text=Cargar+2.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 2</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 2</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-2">portafolio/imagenes/2.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTO 3 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-3">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-3').src, 'Proyecto 3')">
+                        <div class="img-container">
+                            <img id="img-3" src="portafolio/imagenes/3.jpg" alt="Proyecto 3" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FCD5CE/3D3A45?text=Cargar+3.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 3</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 3</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-3">portafolio/imagenes/3.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTO 4 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-4">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-4').src, 'Proyecto 4')">
+                        <div class="img-container">
+                            <img id="img-4" src="portafolio/imagenes/4.jpg" alt="Proyecto 4" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FFE5EC/3D3A45?text=Cargar+4.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 4</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 4</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-4">portafolio/imagenes/4.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTO 5 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-5">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-5').src, 'Proyecto 5')">
+                        <div class="img-container">
+                            <img id="img-5" src="portafolio/imagenes/5.jpg" alt="Proyecto 5" onerror="this.onerror=null; this.src='https://placehold.co/600x400/D8E2DC/3D3A45?text=Cargar+5.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 5</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 5</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-5">portafolio/imagenes/5.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTO 6 -->
+                <div class="col-md-6 col-lg-4 gallery-card-item" id="card-item-6">
+                    <div class="project-card" role="button" onclick="openDynamicModal(document.getElementById('img-6').src, 'Proyecto 6')">
+                        <div class="img-container">
+                            <img id="img-6" src="portafolio/imagenes/6.jpg" alt="Proyecto 6" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FCD5CE/3D3A45?text=Cargar+6.jpg';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-sage);">Proyecto 6</span>
+                            <h4 class="card-title h5 my-2">Trabajo Digital 6</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-6">portafolio/imagenes/6.jpg</code></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- VISOR MODAL EN PANTALLA COMPLETA -->
+    <div id="dynamicProjectModal" class="project-modal" aria-hidden="true" role="dialog">
+        <div class="modal-content-box text-center">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 id="modalTitle" class="h4 mb-0">Vista Ampliada</h3>
+                <button id="closeModalBtn" class="btn-close" aria-label="Cerrar ventana"></button>
+            </div>
+            <img id="modalImage" src="" alt="Vista ampliada" class="modal-img mb-3">
+            <p id="modalPathInfo" class="text-muted small mb-0"></p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE CONTACTO -->
+    <section id="contacto" class="py-5" style="background-color: #F5ECE0;">
+        <div class="container py-4" style="max-width: 600px;">
+            <div class="text-center mb-4">
+                <h2 class="display-5">Contacto</h2>
+                <p style="font-style: italic;">¿Tienes alguna sugerencia o mensaje para nuestro equipo?</p>
+            </div>
+            <form action="#" method="POST" class="p-4 p-md-5 rounded-4 shadow-sm" style="background-color: var(--pastel-card);">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label fw-bold small text-uppercase">Tu Nombre</label>
+                    <input type="text" class="form-control" id="nombre" placeholder="Escribe tu nombre..." required>
+                </div>
+                <div class="mb-3">
+                    <label for="correo" class="form-label fw-bold small text-uppercase">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="correo" placeholder="ejemplo@correo.com" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mensaje" class="form-label fw-bold small text-uppercase">Mensaje</label>
+                    <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                </div>
+                <button type="submit" class="btn-pastel w-100 mt-2">Enviar Mensaje</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="text-center py-4">
+        <div class="container">
+            <p class="small text-uppercase mb-1" style="font-weight: 600; letter-spacing: 1px;">
+                María Alejandra Restrepo M. &bull; Elisabet Carvajal T.
+            </p>
+            <p class="small text-muted mb-0">
+                I.E. Aureliano Flórez Cardona &mdash; Integración de Contenidos Digitales &copy; 2026
+            </p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE PROGRAMACIÓN (JAVASCRIPT) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // CONTROL DE MENÚ DESPLEGABLE
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const navDrawer = document.getElementById('navDrawer');
+            const scrim = document.getElementById('scrim');
+            const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+            const drawerNavLinks = document.querySelectorAll('.drawer-nav-link');
+
+            function openDrawer() {
+                hamburgerBtn.setAttribute('aria-expanded', 'true');
+                navDrawer.classList.add('is-open');
+                scrim.classList.add('is-open');
+                document.body.classList.add('scroll-locked');
+            }
+
+            function closeDrawer() {
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+                navDrawer.classList.remove('is-open');
+                scrim.classList.remove('is-open');
+                document.body.classList.remove('scroll-locked');
+            }
+
+            hamburgerBtn.addEventListener('click', () => {
+                if (hamburgerBtn.getAttribute('aria-expanded') === 'true') {
+                    closeDrawer();
+                } else {
+                    openDrawer();
+                }
+            });
+
+            closeDrawerBtn.addEventListener('click', closeDrawer);
+            scrim.addEventListener('click', closeDrawer);
+            drawerNavLinks.forEach(link => link.addEventListener('click', closeDrawer));
+
+            // VISOR MODAL
+            const dynamicModal = document.getElementById('dynamicProjectModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalPathInfo = document.getElementById('modalPathInfo');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+
+            window.openDynamicModal = function(imgSrc, title) {
+                modalImage.src = imgSrc;
+                modalTitle.textContent = title;
+                modalPathInfo.innerHTML = 'Origen: <code>' + imgSrc + '</code>';
+                dynamicModal.classList.add('is-active');
+                dynamicModal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('scroll-locked');
+            };
+
+            function closeDynamicModal() {
+                dynamicModal.classList.remove('is-active');
+                dynamicModal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('scroll-locked');
+            }
+
+            closeModalBtn.addEventListener('click', closeDynamicModal);
+            dynamicModal.addEventListener('click', (e) => {
+                if (e.target === dynamicModal) closeDynamicModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (navDrawer.classList.contains('is-open')) closeDrawer();
+                    if (dynamicModal.classList.contains('is-active')) closeDynamicModal();
+                }
+            });
+
+            // CONTROL Y GESTIÓN DINÁMICA DE IMÁGENES
+            const galleryContainer = document.getElementById('galleryContainer');
+            const localFileInput = document.getElementById('localFileInput');
+            const customFileName = document.getElementById('customFileName');
+            const targetCardSelect = document.getElementById('targetCardSelect');
+            const addByPathBtn = document.getElementById('addByPathBtn');
+
+            let totalCards = 6; // Contador inicial ajustado a 6 proyectos
+
+            // Función para crear nuevas tarjetas
+            function createCardElement(imgSrc, titleText, pathText) {
+                totalCards++;
+                const cardId = totalCards;
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4 gallery-card-item';
+                col.id = `card-item-${cardId}`;
+
+                col.innerHTML = `
+                    <div class="project-card" role="button">
+                        <div class="img-container">
+                            <img id="img-${cardId}" src="${imgSrc}" alt="${titleText}" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FAF6F0/3D3A45?text=Imagen+No+Encontrada';">
+                        </div>
+                        <div class="card-body p-4">
+                            <span class="badge-pastel mb-2" style="background-color: var(--pastel-peach);">${titleText}</span>
+                            <h4 class="card-title h5 my-2">Trabajo Adicional</h4>
+                            <p class="card-text small text-muted">Ruta actual: <code id="path-${cardId}">${pathText}</code></p>
+                        </div>
+                    </div>
+                `;
+
+                col.querySelector('.project-card').addEventListener('click', () => {
+                    openDynamicModal(document.getElementById(`img-${cardId}`).src, titleText);
+                });
+
+                galleryContainer.appendChild(col);
+
+                // Agregar la nueva opción al selector
+                const option = document.createElement('option');
+                option.value = cardId;
+                option.textContent = `Reemplazar Tarjeta ${cardId}`;
+                targetCardSelect.appendChild(option);
+            }
+
+            // A. Cargar imágenes desde archivos locales seleccionados en el explorador
+            localFileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    Array.from(files).forEach((file) => {
+                        const fileUrl = URL.createObjectURL(file);
+                        createCardElement(fileUrl, `Proyecto ${totalCards + 1}`, `portafolio/imagenes/${file.name}`);
+                    });
+                }
+            });
+
+            // B. Aplicar ruta manual o reemplazar tarjetas existentes
+            addByPathBtn.addEventListener('click', () => {
+                const fileName = customFileName.value.trim();
+                const selectedTarget = targetCardSelect.value;
+
+                if (fileName === '') return;
+
+                const fullPath = `portafolio/imagenes/${fileName}`;
+
+                if (selectedTarget === 'new') {
+                    createCardElement(fullPath, `Proyecto ${totalCards + 1}`, fullPath);
+                } else {
+                    // Reemplazar la tarjeta seleccionada
+                    const imgElement = document.getElementById(`img-${selectedTarget}`);
+                    const pathElement = document.getElementById(`path-${selectedTarget}`);
+
+                    if (imgElement && pathElement) {
+                        imgElement.src = fullPath;
+                        pathElement.textContent = fullPath;
+                    }
+                }
+
+                customFileName.value = '';
+            });
+        });
+    </script>
+</body>
+</html>
